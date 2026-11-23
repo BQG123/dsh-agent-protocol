@@ -1,18 +1,23 @@
 {
   "name": "dsh-agent-protocol",
-  "version": "0.1.0",
-  "description": "Portable work protocol for DSH agents: visible task line, single-pass request refinement, skill routing, forced clarification, strict mode and delivery self-check.",
+  "version": "0.2.0",
+  "description": "Portable work protocol for DSH agents: task line, single-pass request refinement, skill routing, low-friction clarification, strict mode, delivery self-check — with presets and a settings page for switches and prompt wording.",
   "type": "module",
   "main": "./lib/index.js",
   "exports": {
     ".": "./lib/index.js",
+    "./client": "./client/client.js",
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json",
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg"
   },
+  "scripts": {
+    "test": "node --test"
+  },
   "files": [
     "lib",
+    "client",
     "cordis.patch.yml",
     "locale/*.json",
     "docs",
@@ -43,11 +48,23 @@
     "coding-agent"
   ],
   "engines": {
+    "node": ">=20",
     "dsh": ">=0.2.2-rc.1 <0.3.0-0"
   },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": ">=3.18.2 <4"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/schemastery": {
+      "optional": true
     }
   }
 }

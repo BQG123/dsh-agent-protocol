@@ -1,6 +1,46 @@
 # Releasing dsh-agent-protocol
 
-Two **independent** channels. Neither requires the other:
+## Every release in six steps
+
+1. **Bump the version in two places** — `package.json` `version`, and the `VERSION`
+   constant in `lib/index.js` (it is printed in the injected banner). Then prove they agree:
+
+       node -e "const p=require('./package.json').version;const s=require('fs').readFileSync('lib/index.js','utf8').match(/VERSION = '([^']+)'/)[1];if(p!==s){console.error('MISMATCH',p,s);process.exit(1)}console.log('version ok',p)"
+
+2. **Add a `CHANGELOG.md` entry** under a new `## [x.y.z] - YYYY-MM-DD` heading, and
+   point the `[Unreleased]`/`[x.y.z]` link refs at the new tag.
+3. **Verify the payload**: `pnpm pack --dry-run` — the file list must match the
+   preflight list below and nothing else.
+4. **Test locally**: start a new session (or restart DSH) and read the protocol banner —
+   it must show the new version. A linked install picks the change up without reinstalling;
+   a versioned install needs reinstall.
+5. **Commit, tag, push** — annotated tags only, `--follow-tags` ignores lightweight ones:
+
+       git commit -am "release: v0.1.1"
+       git tag -a v0.1.1 -m "v0.1.1"
+       git push origin main --follow-tags
+
+6. **Publish to npm** (only when the marketplace should see it):
+
+       pnpm publish --access public --no-git-checks
+
+Consumers then update differently: npm/market users follow the npm `latest` tag; a
+`github:` dependency follows the branch or tag it pinned (pin `#v0.1.1` for stability).
+
+## Which version number?
+
+| Change | Bump |
+|---|---|
+| Typo, comment, docs only | **patch** |
+| Section wording, new switch, new trigger, changed default | **minor** |
+| Removed switch, renamed section, changed section contract | **major** |
+
+While the plugin is `0.x`, minor is the safe default for any behaviour change: a user
+reading `CHANGELOG` must be able to tell that the injected text changed.
+
+## Two independent channels
+
+Neither requires the other:
 
 | Channel | What it buys | Gate |
 |---|---|---|

@@ -1,15 +1,16 @@
 # dsh-agent-protocol bundle patch: one Host plugin row that injects the protocol
-# into every agent's system prompt. All switches are editable in
-# Settings -> Plugins (or the profile patch) without restarting.
+# into every agent's system prompt. Editable in Settings -> Plugins (or the
+# profile patch).
+#
+# `preset` decides the section switches: lite | standard | strict.
+# To override one switch, add it here explicitly, e.g. `taskLine: false`:
+#   taskLine, refine, strictMode, skillRouting, clarify, researchClarify,
+#   teamPolicy, deliveryCheck
 - insert:
     - id: agent-protocol
       name: dsh-agent-protocol
       config:
         language: zh
+        preset: standard
         sectionOrder: 150
-        taskLine: true
-        skillRouting: true
-        clarify: true
-        strictMode: true
-        teamPolicy: true
-        deliveryCheck: true
+        extraRules: []

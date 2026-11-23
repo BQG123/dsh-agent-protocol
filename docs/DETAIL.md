@@ -17,123 +17,187 @@ the first user turn. Profiles accumulate skills, tools and MCP servers, but rare
 so every agent in the profile behaves the same way on the first turn — not after the
 user has corrected it three times.
 
+The protocol's first sentence sets the priority: when it conflicts with an explicit
+instruction from the user, the user wins.
+
 ## Section by section
 
-### 0. Visibility
+Sections are numbered consecutively at build time; they are described here in order
+of appearance.
 
-Each substantive reply opens with a task line: `[Task] <15–40 words>` (Chinese:
-`【任务】...`). When a skill was loaded this turn it appends `| Skills: <names>`;
-when the agent must ask first it appends `| Confirm: <N> questions`; when it proceeds
-with an unknown it adds an explicit `[Assumption]` line instead of hiding the guess.
+### Visibility
 
-Why: a scrolling transcript is hard to audit. A one-line statement of intent per
-reply makes "what did this turn actually do" answerable at a glance, and makes
-silent scope changes visible.
+The first reply to a **new task** opens with a task line: `[Task] <one line>`
+(Chinese: `【任务】...`). Follow-ups, later replies on the same task, greetings and
+short answers do not — the task line is a signpost for a task, not a header for every
+reply. A loaded skill gets its own `[Skill] <name>` line in the reply that loads it.
 
-### 1. Refine once
+When the agent proceeds on an unconfirmed premise it adds an explicit `[Assumption]`
+line instead of hiding the guess. This rule has no switch: several exits of "ask
+before acting" land on `[Assumption]`, so it must always be defined.
+
+### Refine once
 
 Colloquial input ("make the docs better", "fix that thing") is compressed into a
-single 15–40 word statement containing action, object, constraints and the capability
-being used. That statement *is* the execution instruction. Writing a second, expanded
-version is explicitly forbidden — it is the most common way agents burn a turn.
+single statement containing action, object, constraints and the capability being
+used. That statement *is* the execution instruction. Writing a second, expanded
+version is explicitly ruled out — it is the most common way agents burn a turn.
 
-A structured clarification block (goal / inputs / constraints / steps / acceptance /
-rollback) is only added when material ambiguity survives the compression.
+A structured brief (goal / inputs / constraints / steps / acceptance / rollback) is
+only added when material ambiguity survives the compression.
 
-### 1b. Strict mode
+### Strict mode
 
-Triggers on any of: ≥3 constraints; ≥3 files or ≥2 subsystems; irreversible or
-high-risk work; an estimated >10 minutes or multiple iterations; or the user
-explicitly asking for rigour.
+Triggers on any of: ≥3 explicit constraints; ≥2 subsystems or a wide change (about ≥5
+files); irreversible or high-risk work; an estimated >10 minutes or several rounds; or
+the user explicitly asking for rigour.
 
-When triggered, three things are mandatory:
+When triggered:
 
-- a **constraints table** with a *decidable* acceptance criterion per row;
-- confirming gaps **before** starting (never an `[Assumption]` shortcut);
-- an **item-by-item** self-check at delivery — each row marked met/unmet with evidence.
+- a **constraint list** with a *decidable* acceptance criterion per item, before starting;
+- gaps are confirmed first;
+- an **item-by-item** check at delivery — each item marked met/not met with evidence.
 
-Note what is *not* required: a question. Strict mode governs output shape. Asking is
-governed by §3 and only happens when a real gap exists.
+When not triggered, the agent is told **not** to output a constraint list, so ordinary
+tasks do not get wrapped in tables. `preset: strict` replaces the triggers with "every
+non-trivial task".
 
-### 2. Capability routing
+Strict mode governs output shape. Asking is governed by "ask before acting" and only
+happens when a real gap exists.
+
+### Capability routing
 
 Skills and tools are matched **semantically, by capability**, not by literal keyword,
 and loaded before the agent acts. Chaining is allowed and encouraged. Before replying,
 the agent checks whether it silently skipped an available capability, and when a
 dependency is missing it must say so and offer a fallback rather than quietly bypass it.
 
-### 3. Ask before acting
+### Ask before acting
 
-Seven triggers, each concrete enough to be auditable:
+The goal of this section is **few, precise questions**. Only five situations force one:
 
-1. two or more plausible interpretations of the deliverable;
-2. missing key values, ranges or units;
-3. vague wording ("optimize it", "do that thing", "whatever");
+1. the deliverable has two or more reasonable interpretations and the wrong one means rework;
+2. a key value, range or definition is missing;
+3. the reference or request is vague and context, files and history cannot resolve it;
 4. irreversible work with an unclear target or blast radius;
-5. rework cost above one round of conversation;
-6. the user explicitly asks to confirm first;
-7. the task is research work (literature, simulation, experiment design, analysis,
-   paper/proposal, group-meeting or defence material).
+5. the user explicitly asks to confirm first.
 
-At most three questions, each with options and a recommended default. The counterweight
-matters as much as the list: **anything decidable by reading files, searching, or
-inspecting the environment must not be asked.** A config value that is in
-`package.json` is not a question — it is a read.
+With `researchClarify` on (the default) there is a sixth: research work (literature,
+simulation, experiment design, analysis, paper/proposal, group-meeting or defence
+material) confirms scope, definitions and output format before starting — without
+re-asking anything the user already specified.
 
-### 4. Team
+How to ask: everything at once, at most three questions, each with options and a marked
+recommendation; through the host's question tool (e.g. `ask_user_question`) when there
+is one, so the user just clicks.
 
-Teams are expensive and only worth it for ≥4 steps, independent parallel subtasks, a
-research→implement→verify split, long runtimes, or an explicit request. Member briefs
-carry task, skills, acceptance criteria and artifact paths.
+**Three things must not be asked** — this is what keeps the protocol out of the way:
 
-### 5. Efficiency and safety
+- anything decidable by reading files, searching, or inspecting the environment — a
+  config value that is in `package.json` is not a question, it is a read;
+- anything reversible and cheap to get wrong — take the most reasonable reading and
+  add an `[Assumption]` line;
+- anything after the user said "just do it" or "you decide".
+
+After the user answers, the agent executes directly and never repeats a question.
+
+**When nobody can be asked.** DSH keeps the system prompt uniform across parents and
+children, so subagents, background jobs and scheduled runs receive this protocol too —
+with no user in front of them. In that case the agent must neither ask nor stop: it
+takes the most reasonable reading and lists its `[Assumption]`s in the result for the
+parent to judge.
+
+### Team
+
+Teams are expensive and only worth it for ≥4 steps with independent parallel subtasks,
+a research→implement→verify split, long runtimes, or an explicit request. Member briefs
+carry task, skills, acceptance criteria and artifact paths. The team field is not
+reported to the user — the UI shows it.
+
+### Efficiency and safety
 
 Always on, no switch: parallelize independent subtasks; back up or state impact before
-modifying or deleting; search large files before reading them in chunks; answer in the
-user's language, conclusion first, tables over prose, no irrelevant log dumps.
+modifying or deleting; explain consequences before irreversible actions; search large
+files before reading them in chunks; reply in the user's language, conclusion first, a
+table when comparing or enumerating, no irrelevant log dumps.
 
-### 6. Delivery self-check
+### Delivery self-check
 
-Six questions before "done": declared skills == loaded skills? acceptance met? artifact
-paths given? rollback stated for overwrite/delete? did you ask what should have been
-asked? did you verify the result rather than assume it?
+Six silent questions before "done": declared skills == loaded skills? acceptance met?
+artifact paths given? rollback stated for overwrite/delete? did you ask what should
+have been asked? are the conclusions verified rather than assumed?
+
+The check is **not printed** unless strict mode is active. Questions that refer to a
+disabled section are dropped from the list.
+
+### Additional rules
+
+Each item of `extraRules` is appended as one rule in a final section — a place for
+deployment-specific clauses without forking the plugin.
+
+## Settings page
+
+The **Work protocol** sidebar entry opens the settings page: preset, switches, the
+wording of each section and the additional rules on the left; the exact injected text
+with character and estimated token counts on the right, updated live. Every section
+body can be rewritten; a rewritten section is marked "Edited", can be restored with
+one click, and no longer changes wording with the switches. Saving applies to every
+session from its next model request, without a restart. Page edits layer on top of the
+row config in Settings → Plugins and are stored in
+`$DSH_HOME/agent-protocol/overrides.json`.
+
+## Choosing a preset
+
+| Preset | For | Behaviour |
+|---|---|---|
+| `lite` | The protocol feels heavy; mostly conversation and small edits | No task line, no constraint list, no self-check; refinement, routing and clarification only |
+| `standard` | Default | One task line per new task; strict mode only for complex work |
+| `strict` | Releases, migrations, research deliverables — work that must not go wrong | Every non-trivial task gets a constraint list and an item-by-item check |
+
+A preset only sets switch defaults; an explicit switch always wins.
 
 ## Worked example
 
 Request: *"Update both locale files, add the missing config to the README, bump the
 version, then publish."*
 
-- **Strict mode?** 4 requirements (≥3), 4 files (≥3), and `publish` is irreversible →
-  three triggers fire at once.
+- **Strict mode?** 4 requirements (≥3) and `publish` is irreversible → two triggers.
 - **Clarify?** Yes, one question: *"patch or minor? Adding a documented config key is a
-  feature → I recommend a minor bump."* (Key value that changes the artifact, per
-  trigger 2.)
-- **Constraints table** — locale keys valid JSON / README lists all keys / version
+  feature → I recommend a minor bump."* (A missing key value that changes the artifact.)
+- **Constraint list** — locale files valid JSON / README lists all keys / version
   distinct from npm latest / tarball contains `lib`, `docs`, `icon.svg`.
-- **Delivery** — four rows marked met with evidence (file line, command output),
+- **Delivery** — four items marked met with evidence (file line, command output),
   plus the rollback note (published versions cannot be unpublished after 72 h;
   the local backup path is recorded).
 
-If nothing had been missing, the same task would produce the table, execute, and
+If nothing had been missing, the same task would produce the list, execute, and
 deliver with **zero questions**.
+
+Conversely, *"give this function a clearer name"* is reversible and cheap → no
+question; the agent renames it and adds "[Assumption] named after what callers use it for".
 
 ## FAQ
 
 **Is it a hard gate?** No. It is system-prompt text. A model can still deviate; the
 plugin never blocks a tool call or validates output.
 
-**Does it slow every turn down?** Only strict-mode tasks pay the table cost. A single
-factual question gets a one-line task statement and an answer.
+**Does it slow every turn down?** No. The task line appears only on the first reply to
+a new task, only strict-mode tasks pay for the list, and the self-check is silent.
 
-**Can I disable one section?** Yes — nine switches, editable in Settings → Plugins
-without reinstalling. Section 5 has no switch.
+**Still too many questions?** Turn `researchClarify` off, or use `preset: lite`. Saying
+"just do it" in the conversation also stops further questions.
 
-**Does it work in English?** Yes: `language: en` swaps the whole protocol text.
+**Can I disable one section?** Yes — eight switches and three presets, on the Work
+protocol page in the sidebar; saving applies immediately. Efficiency & safety and the `[Assumption]`
+line have no switch.
 
-**Does it write anything to my profile?** No. Installing adds one host row; uninstalling
-removes the text with no residue.
+**Does it work in English?** Yes: `language: en` swaps the whole protocol text. The
+reply language always follows the user regardless of this setting.
+
+**Does it write anything to my profile?** No. Installing adds one host row. Saving on
+the settings page writes one file, `$DSH_HOME/agent-protocol/overrides.json`, which
+you can delete by hand after uninstalling.
 
 ## Compatibility
 
-`engines.dsh`: `>=0.2.2-rc.1 <0.3.0-0`. Verified on DSH 0.2.2-rc.5 (Windows desktop).
-No network access, no telemetry, no data collection.
+`engines.dsh`: `>=0.2.2-rc.1 <0.3.0-0`. No network access, no telemetry, no data collection.

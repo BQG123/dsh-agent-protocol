@@ -2,17 +2,17 @@
 
 ## Every release in six steps
 
-1. **Bump the version in two places** — `package.json` `version`, and the `VERSION`
-   constant in `lib/index.js` (it is printed in the injected banner). Then prove they agree:
+1. **Bump `version` in `package.json`** — the only place. The banner in the injected
+   text reads it from there, and `npm test` asserts they agree. Run the tests:
 
-       node -e "const p=require('./package.json').version;const s=require('fs').readFileSync('lib/index.js','utf8').match(/VERSION = '([^']+)'/)[1];if(p!==s){console.error('MISMATCH',p,s);process.exit(1)}console.log('version ok',p)"
+       npm test
 
 2. **Add a `CHANGELOG.md` entry** under a new `## [x.y.z] - YYYY-MM-DD` heading, and
    point the `[Unreleased]`/`[x.y.z]` link refs at the new tag.
 3. **Verify the payload**: `pnpm pack --dry-run` — the file list must match the
    preflight list below and nothing else.
 4. **Test locally**: start a new session (or restart DSH) and read the protocol banner —
-   it must show the new version. A linked install picks the change up without reinstalling;
+   it must show the new version and preset. A linked install picks the change up without reinstalling;
    a versioned install needs reinstall.
 5. **Commit, tag, push** — annotated tags only, `--follow-tags` ignores lightweight ones:
 
@@ -79,6 +79,7 @@ version already points at a live repository.
 - [ ] `version` in `package.json` is not already on npm
       (`npm view dsh-agent-protocol version` → 404 means the name is free)
 - [ ] `CHANGELOG.md` has an entry for that version
+- [ ] `npm test` passes
 - [ ] payload is right: `pnpm pack --dry-run` (or `npm pack --dry-run`) lists
       `lib/`, `cordis.patch.yml`, `locale/*.json`, `docs/`, `icon.svg`,
       `README.md`, `README.zh-CN.md`, `CHANGELOG.md`, `LICENSE` — and nothing else
@@ -119,7 +120,7 @@ Notes:
     git config user.email "you@example.com"
     git add -A
     git commit -m "feat: initial release of dsh-agent-protocol 0.1.0"
-    git tag v0.1.0
+    git tag -a v0.1.0 -m "v0.1.0"
 
 Create the remote (web UI, or `gh repo create`) as `<owner>/dsh-agent-protocol`, public,
 no template. Then:
@@ -136,8 +137,6 @@ Fill the fields the npm page reads, in `package.json`:
     "bugs": { "url": "https://github.com/<owner>/dsh-agent-protocol/issues" }
 
 Commit and push again **before** the first `publish`, so 0.1.0 ships with a working link.
-
-Also replace the `OWNER` placeholders in `CHANGELOG.md`.
 
 ## 3. List it in the plugin market
 
@@ -161,11 +160,9 @@ it as `dsh-plugin-catalog/index.json`.
 
 ## 4. Update flow
 
-1. Edit code/docs, add a `CHANGELOG.md` entry, bump `version`.
-2. `git commit`, `git tag vX.Y.Z`, `git push --follow-tags`.
-3. `pnpm publish --access public --no-git-checks`.
-4. Users receive the update through the market's per-plugin version check; an installed
-   bundle needs a DSH restart to load a fresh JS module generation.
+Follow "Every release in six steps" at the top. Users receive the update through the
+market's per-plugin version check; an installed bundle needs a DSH restart to load a
+fresh JS module generation.
 
 ## 5. Safety checklist before publishing
 

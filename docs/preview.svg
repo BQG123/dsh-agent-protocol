@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="300" viewBox="0 0 640 300" role="img" aria-label="Work protocol flow">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef3ff"/>
+      <stop offset="1" stop-color="#e8f7f2"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f7f9ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="300" rx="18" fill="url(#bg)"/>
+  <g stroke="#c9d6f2" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M128 150 H 164"/>
+    <path d="M244 150 H 280"/>
+    <path d="M360 150 H 396"/>
+    <path d="M476 150 H 512"/>
+  </g>
+  <g fill="#8fa6d9">
+    <path d="M164 150 l-8 -5 v10 z"/>
+    <path d="M280 150 l-8 -5 v10 z"/>
+    <path d="M396 150 l-8 -5 v10 z"/>
+    <path d="M512 150 l-8 -5 v10 z"/>
+  </g>
+
+  <!-- 1 task line -->
+  <rect x="32" y="96" width="96" height="108" rx="14" fill="url(#card)" stroke="#c9d6f2" stroke-width="2"/>
+  <rect x="52" y="116" width="56" height="10" rx="5" fill="#4c6ef5"/>
+  <rect x="52" y="136" width="40" height="8" rx="4" fill="#b9c6e6"/>
+  <rect x="52" y="152" width="48" height="8" rx="4" fill="#d5ddf0"/>
+  <circle cx="60" cy="182" r="8" fill="#e3ebff"/>
+  <path d="M56 182 l3 3 l6 -7" stroke="#4c6ef5" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- 2 refine -->
+  <rect x="176" y="96" width="96" height="108" rx="14" fill="url(#card)" stroke="#c9d6f2" stroke-width="2"/>
+  <path d="M198 120 h52 l-18 20 v26 l-16 10 v-36 z" fill="#4c6ef5" opacity="0.85"/>
+  <rect x="198" y="186" width="34" height="8" rx="4" fill="#b9c6e6"/>
+
+  <!-- 3 routing -->
+  <rect x="320" y="96" width="96" height="108" rx="14" fill="url(#card)" stroke="#c9d6f2" stroke-width="2"/>
+  <circle cx="344" cy="132" r="8" fill="#12b886"/>
+  <path d="M352 132 h16 M368 132 v20 M368 152 h18" stroke="#12b886" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <circle cx="386" cy="152" r="6" fill="#12b886"/>
+  <path d="M368 132 v14" stroke="#12b886" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="368" cy="120" r="6" fill="#9ae6c6"/>
+  <circle cx="386" cy="112" r="6" fill="#9ae6c6"/>
+  <rect x="340" y="182" width="56" height="8" rx="4" fill="#b9c6e6"/>
+
+  <!-- 4 ask -->
+  <rect x="464" y="96" width="96" height="108" rx="14" fill="url(#card)" stroke="#c9d6f2" stroke-width="2"/>
+  <path d="M512 118 a16 16 0 1 1 -9 30 v10" fill="none" stroke="#f08c00" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="503" cy="172" r="3.5" fill="#f08c00"/>
+  <rect x="482" y="186" width="44" height="8" rx="4" fill="#b9c6e6"/>
+
+  <!-- 5 check -->
+  <rect x="560" y="96" width="48" height="108" rx="14" fill="url(#card)" stroke="#c9d6f2" stroke-width="2"/>
+  <circle cx="584" cy="134" r="16" fill="#e6fcf5" stroke="#12b886" stroke-width="3"/>
+  <path d="M576 134 l6 6 l11 -12" stroke="#12b886" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="574" y="162" width="20" height="7" rx="3.5" fill="#b9c6e6"/>
+  <rect x="574" y="176" width="14" height="7" rx="3.5" fill="#d5ddf0"/>
+</svg>

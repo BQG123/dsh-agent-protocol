@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Agent work protocol">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4c6ef5"/>
+      <stop offset="1" stop-color="#12b886"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#g)"/>
+  <path d="M64 22 l26 10 v22 c0 20 -12 34 -26 40 c-14 -6 -26 -20 -26 -40 v-22 z" fill="#ffffff" opacity="0.95"/>
+  <path d="M50 62 l9 9 l20 -22" stroke="#12b886" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="46" y="88" width="36" height="7" rx="3.5" fill="#c9d6f2"/>
+</svg>

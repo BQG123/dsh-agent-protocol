@@ -1,0 +1,15 @@
+# dsh-agent-protocol bundle patch: one Host plugin row that injects the protocol
+# into every agent's system prompt. All switches are editable in
+# Settings -> Plugins (or the profile patch) without restarting.
+- insert:
+    - id: agent-protocol
+      name: dsh-agent-protocol
+      config:
+        language: zh
+        sectionOrder: 150
+        taskLine: true
+        skillRouting: true
+        clarify: true
+        strictMode: true
+        teamPolicy: true
+        deliveryCheck: true

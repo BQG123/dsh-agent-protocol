@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Agent work protocol",
+    "description": "Injects a portable work protocol into every agent's system prompt: a visible task line, one-pass request refinement, semantic skill routing, forced clarification with concrete triggers, strict mode for high-requirement work, and a delivery self-check. Each section can be switched off in the bundle config. This is model guidance, not a hard gate; it writes nothing to your profile and applies to agents of this profile only.",
+    "detail": "docs/DETAIL.md"
+  }
+}
